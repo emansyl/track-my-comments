@@ -222,7 +222,7 @@ function HistorySessionItem({
             {session.case && (
               <div className="mt-2 mb-3 flex items-center gap-2">
                 <BookOpen
-                  className={cn("h-4 w-4 flex-shrink-0", courseColors.title)}
+                  className={cn("h-4 w-4 shrink-0", courseColors.title)}
                 />
                 <span
                   className={cn(
@@ -296,7 +296,7 @@ function HistorySessionItem({
             {session.case && (
               <div className="mb-2 flex items-center gap-2">
                 <BookOpen
-                  className={cn("h-3 w-3 flex-shrink-0", courseColors.title)}
+                  className={cn("h-3 w-3 shrink-0", courseColors.title)}
                 />
                 <span
                   className={cn(

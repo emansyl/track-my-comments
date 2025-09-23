@@ -7,7 +7,7 @@ export default function Home() {
   const githubUrl = "https://github.com/your-username/your-repo"; // update with the actual repo
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-crimson-50 via-white to-crimson-100 dark:from-gray-950 dark:via-gray-900 dark:to-crimson-950">
+    <div className="min-h-screen bg-linear-to-b from-crimson-50 via-white to-crimson-100 dark:from-gray-950 dark:via-gray-900 dark:to-crimson-950">
       <section className="px-4 py-14 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">

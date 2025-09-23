@@ -49,7 +49,7 @@ export function SessionCard({ session }: SessionCardProps) {
           {sessionCase && (
             <div className="mb-3 flex items-center gap-2">
               <BookOpen
-                className={cn("h-4 w-4 flex-shrink-0", courseColors.title)}
+                className={cn("h-4 w-4 shrink-0", courseColors.title)}
               />
               <span
                 className={cn(
