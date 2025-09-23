@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "tw-animate-css";
+@plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -114,11 +114,17 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
-  }
+    @apply border-border;
+  } /* drop outline-ring/50 */
   body {
     @apply bg-background text-foreground;
   }
+}
+
+:where(textarea, input):focus {
+  @apply ring-2 ring-ring/50;
+  transform: scale(1.02);
+  transition: all 0.2s ease-in-out;
 }
 
 /* Mobile-specific styles */
