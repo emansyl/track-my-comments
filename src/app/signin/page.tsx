@@ -38,6 +38,7 @@ export default function SignInPage() {
           },
         }
       );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("An unexpected error occurred");
       setLoading(false);

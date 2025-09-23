@@ -87,12 +87,12 @@ colorThemes.set("DEFAULT", {
 // })
 
 // Get consistent color theme for a course name
-export function getCourseColor(courseName: CourseName): CourseColor {
+export function getCourseColor(courseName: string): CourseColor {
   return colorThemes.get(courseName) || colorThemes.get("DEFAULT")!;
 }
 
 // Helper function to get course color classes as a string
-export function getCourseColorClasses(courseName: CourseName) {
+export function getCourseColorClasses(courseName: string) {
   const colors = getCourseColor(courseName);
   return {
     card: `${colors.bg} ${colors.border}`,

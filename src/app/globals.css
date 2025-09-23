@@ -131,7 +131,8 @@
 }
 
 /* Ensure touch targets are at least 44px */
-button, .touch-target {
+button,
+.touch-target {
   min-height: 44px;
 }
 
@@ -165,7 +166,8 @@ html {
 }
 
 @keyframes starPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -192,7 +194,8 @@ html {
 }
 
 /* Smooth focus states */
-textarea:focus, input:focus {
+textarea:focus,
+input:focus {
   transform: scale(1.02);
   transition: all 0.2s ease-in-out;
 }

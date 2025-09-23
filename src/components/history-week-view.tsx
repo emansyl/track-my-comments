@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, Star, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getWeekData } from "@/app/actions/history";
 import { ParticipationWidget } from "@/components/participation-widget";
-import { getCourseColorClasses } from "@/lib/course-colors";
+import { CourseName, getCourseColorClasses } from "@/lib/course-colors";
 
 interface WeekData {
   weekStart: Date;
@@ -74,7 +74,7 @@ function createMinimalParticipation(
 
 function HistorySessionCard({ session, onUpdate }: HistorySessionCardProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const courseColors = getCourseColorClasses(session.courseName);
+  const courseColors = getCourseColorClasses(session.courseName as CourseName);
 
   const renderStars = (quality: number) => {
     return Array.from({ length: 3 }, (_, i) => (

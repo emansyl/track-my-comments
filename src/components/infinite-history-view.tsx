@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { ParticipationWidget } from '@/components/participation-widget';
-import { getCourseColorClasses } from '@/lib/course-colors';
-import { cn } from '@/lib/utils';
-import { BookOpen, Clock, Calendar, Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ParticipationWidget } from "@/components/participation-widget";
+import { CourseName, getCourseColorClasses } from "@/lib/course-colors";
+import { cn } from "@/lib/utils";
+import { BookOpen, Clock, Calendar, Loader2 } from "lucide-react";
+import { Participation } from "../../generated/prisma";
 
 export interface HistorySession {
   id: string;
@@ -36,10 +37,10 @@ interface InfiniteHistoryViewProps {
   }>;
 }
 
-export function InfiniteHistoryView({ 
-  initialGroups, 
-  hasMore: initialHasMore, 
-  onLoadMore 
+export function InfiniteHistoryView({
+  initialGroups,
+  hasMore: initialHasMore,
+  onLoadMore,
 }: InfiniteHistoryViewProps) {
   const [groups, setGroups] = useState<HistoryGroup[]>(initialGroups);
   const [hasMore, setHasMore] = useState(initialHasMore);
@@ -62,11 +63,11 @@ export function InfiniteHistoryView({
     setIsLoading(true);
     try {
       const result = await onLoadMore(nextCursor);
-      setGroups(prev => [...prev, ...result.historyGroups]);
+      setGroups((prev) => [...prev, ...result.historyGroups]);
       setHasMore(result.hasMore);
       setNextCursor(result.nextCursor);
     } catch (error) {
-      console.error('Error loading more history:', error);
+      console.error("Error loading more history:", error);
     } finally {
       setIsLoading(false);
     }
@@ -90,13 +91,13 @@ export function InfiniteHistoryView({
     return () => observer.disconnect();
   }, [hasMore, isLoading, loadMore]);
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
+  // const formatTime = (date: Date) => {
+  //   return date.toLocaleTimeString('en-US', {
+  //     hour: 'numeric',
+  //     minute: '2-digit',
+  //     hour12: true
+  //   });
+  // };
 
   const handleSessionUpdate = () => {
     // Refresh the current view - could be optimized with better state management
@@ -132,9 +133,9 @@ export function InfiniteHistoryView({
           {/* Sessions for this date */}
           <div className="space-y-3">
             {group.sessions.map((session) => (
-              <HistorySessionItem 
-                key={session.id} 
-                session={session} 
+              <HistorySessionItem
+                key={session.id}
+                session={session}
                 onUpdate={handleSessionUpdate}
               />
             ))}
@@ -161,46 +162,47 @@ export function InfiniteHistoryView({
 }
 
 // Individual session item component
-function HistorySessionItem({ 
-  session, 
-  onUpdate 
-}: { 
-  session: HistorySession; 
-  onUpdate: () => void; 
+function HistorySessionItem({
+  session,
+  onUpdate,
+}: {
+  session: HistorySession;
+  onUpdate: () => void;
 }) {
   const [isEditing, setIsEditing] = useState(false);
-  const courseColors = getCourseColorClasses(session.courseName);
+  const courseColors = getCourseColorClasses(session.courseName as CourseName);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
   const getParticipationStatus = () => {
-    if (!session.participation) return { icon: '—', text: 'No record', color: 'text-gray-400' };
+    if (!session.participation)
+      return { icon: "—", text: "No record", color: "text-gray-400" };
     if (session.participation.participated) {
-      return { 
-        icon: '✓', 
-        text: `Participated`, 
-        color: 'text-green-600',
-        quality: session.participation.quality
+      return {
+        icon: "✓",
+        text: `Participated`,
+        color: "text-green-600",
+        quality: session.participation.quality,
       };
     }
-    return { icon: '✗', text: 'Didn\'t participate', color: 'text-gray-500' };
+    return { icon: "✗", text: "Didn't participate", color: "text-gray-500" };
   };
 
   const status = getParticipationStatus();
 
-  const createMinimalParticipation = (participation: any) => {
+  const createMinimalParticipation = (participation: Participation) => {
     if (!participation) return null;
-    
+
     return {
       id: participation.id,
-      userId: '',
-      courseSessionId: '',
+      userId: "",
+      courseSessionId: "",
       participated: participation.participated,
       quality: participation.quality,
       note: participation.note,
@@ -211,16 +213,23 @@ function HistorySessionItem({
 
   if (isEditing) {
     return (
-      <Card className={cn('border-2', courseColors.card)}>
+      <Card className={cn("border-2", courseColors.card)}>
         <CardContent className="p-4">
           <div className="mb-3">
-            <h3 className={cn('font-semibold text-lg', courseColors.title)}>
+            <h3 className={cn("font-semibold text-lg", courseColors.title)}>
               {session.courseName}
             </h3>
             {session.case && (
               <div className="mt-2 mb-3 flex items-center gap-2">
-                <BookOpen className={cn('h-4 w-4 flex-shrink-0', courseColors.title)} />
-                <span className={cn('text-sm font-medium px-3 py-1 rounded-full', courseColors.case)}>
+                <BookOpen
+                  className={cn("h-4 w-4 flex-shrink-0", courseColors.title)}
+                />
+                <span
+                  className={cn(
+                    "text-sm font-medium px-3 py-1 rounded-full",
+                    courseColors.case
+                  )}
+                >
                   {session.case}
                 </span>
               </div>
@@ -229,10 +238,12 @@ function HistorySessionItem({
               {formatTime(session.startAt)} - {formatTime(session.endAt)}
             </div>
           </div>
-          
+
           <ParticipationWidget
             sessionId={session.id}
-            participation={createMinimalParticipation(session.participation)}
+            participation={createMinimalParticipation(
+              session.participation as Participation
+            )}
             mode="edit"
             onUpdate={() => {
               setIsEditing(false);
@@ -245,9 +256,9 @@ function HistorySessionItem({
   }
 
   return (
-    <Card 
+    <Card
       className={cn(
-        'cursor-pointer hover:shadow-md transition-all duration-200 border-2',
+        "cursor-pointer hover:shadow-md transition-all duration-200 border-2",
         courseColors.card,
         courseColors.hover,
         courseColors.mobile,
@@ -259,20 +270,20 @@ function HistorySessionItem({
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h3 className={cn('font-medium', courseColors.title)}>
+              <h3 className={cn("font-medium", courseColors.title)}>
                 {session.courseName}
               </h3>
-              <span className={cn('text-lg', status.color)}>
-                {status.icon}
-              </span>
+              <span className={cn("text-lg", status.color)}>{status.icon}</span>
               {status.quality && (
                 <div className="flex gap-1">
                   {Array.from({ length: 3 }, (_, i) => (
                     <span
                       key={i}
                       className={cn(
-                        'text-xs',
-                        i < status.quality! ? 'text-yellow-400' : 'text-gray-300'
+                        "text-xs",
+                        i < status.quality!
+                          ? "text-yellow-400"
+                          : "text-gray-300"
                       )}
                     >
                       ★
@@ -281,16 +292,23 @@ function HistorySessionItem({
                 </div>
               )}
             </div>
-            
+
             {session.case && (
               <div className="mb-2 flex items-center gap-2">
-                <BookOpen className={cn('h-3 w-3 flex-shrink-0', courseColors.title)} />
-                <span className={cn('text-xs font-medium px-2 py-1 rounded-full', courseColors.case)}>
+                <BookOpen
+                  className={cn("h-3 w-3 flex-shrink-0", courseColors.title)}
+                />
+                <span
+                  className={cn(
+                    "text-xs font-medium px-2 py-1 rounded-full",
+                    courseColors.case
+                  )}
+                >
                   {session.case}
                 </span>
               </div>
             )}
-            
+
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1 text-xs text-gray-500">
                 <Clock className="h-3 w-3" />
@@ -303,7 +321,8 @@ function HistorySessionItem({
 
         {session.participation?.note && (
           <div className="mt-3 p-2 bg-blue-50 rounded text-xs text-gray-700">
-            <span className="font-medium">Note:</span> {session.participation.note}
+            <span className="font-medium">Note:</span>{" "}
+            {session.participation.note}
           </div>
         )}
       </CardContent>
