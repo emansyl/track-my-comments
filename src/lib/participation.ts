@@ -119,7 +119,7 @@ export async function getWeekParticipation(weekOffset: number = 0) {
       },
     },
     orderBy: {
-      startAt: "desc",
+      startAt: "asc",
     },
   });
 

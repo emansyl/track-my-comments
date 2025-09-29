@@ -1,17 +1,25 @@
-// prisma/seed.ts
-// import {
-//   PrismaClient,
-//   CourseSessionCreateManyInput,
-// } from "../generated/prisma";
+// // prisma/seed.ts
+// import { PrismaClient, Prisma } from "../generated/prisma";
 // const prisma = new PrismaClient();
 
 // async function main() {
+//   //   await prisma.course.createMany({
+//   //     data: [
+//   //       { name: "MKT" },
+//   //       { name: "LEAD" },
+//   //       { name: "FIN 1" },
+//   //       { name: "FRC" },
+//   //       { name: "STRAT" },
+//   //       { name: "TOM" },
+//   //     ],
+//   //   });
 //   const courses = await prisma.course.findMany({
 //     select: {
 //       id: true,
 //       name: true,
 //     },
 //   });
+//   console.log(courses);
 
 //   const courseMap = new Map(courses.map((course) => [course.name, course.id]));
 //   console.log(courseMap);
@@ -28,16 +36,32 @@
 //     Object.fromEntries(row.map((val, i) => [headers[i], val]))
 //   );
 
+//   const missing: Set<string> = new Set();
+
 //   const sessions = data.map((row) => {
 //     const courseId = courseMap.get(row["Class"]);
+//     if (!courseId) {
+//       missing.add(row["Class"]);
+//       return null;
+//     }
+//     const start = new Date(row["Date"]);
+//     const end = new Date(row["Date"]); // adjust if you have separate end values
+
 //     return {
 //       courseId,
-//       startAt: new Date(row["Date"]),
-//       endAt: new Date(row.Date),
-//       case: row.Topic,
-//     };
+//       startAt: start,
+//       endAt: end,
+//       case: row["Topic"] || null, // field is optional in schema
+//     } satisfies Prisma.CourseSessionCreateManyInput;
 //   });
-//   console.log(sessions);
+
+//   if (missing.size > 0) {
+//     console.warn(
+//       "These classes were not found in Course table and were skipped:",
+//       [...missing]
+//     );
+//   }
+//   //   console.log(sessions);
 //   await prisma.participation.deleteMany();
 //   await prisma.courseSession.deleteMany();
 //   await prisma.courseSession.createMany({
