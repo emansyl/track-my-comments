@@ -21,9 +21,7 @@ export function AppHeader({ title, subtitle }: AppHeaderProps) {
               <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
             )}
           </div>
-          {session?.user && (
-            <UserMenu user={session.user} />
-          )}
+          {session?.user && <UserMenu user={session.user} />}
         </div>
       </div>
     </header>

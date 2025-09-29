@@ -2,9 +2,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function Home() {
-  // TODO: replace these with your real links
-  const linkedInUrl = "https://www.linkedin.com/in/emmanuelsylvester/"; // update if different
-  const githubUrl = "https://github.com/your-username/your-repo"; // update with the actual repo
+  const linkedInUrl = "https://www.linkedin.com/in/emmanuelsylvester/";
+  const githubUrl = "https://github.com/emansyl/track-my-comments";
 
   return (
     <div className="min-h-screen bg-linear-to-b from-crimson-50 via-white to-crimson-100 dark:from-gray-950 dark:via-gray-900 dark:to-crimson-950">
@@ -25,10 +24,6 @@ export default function Home() {
               <Link href="/signin">Sign in</Link>
             </Button>
           </div>
-
-          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-            Built for my classmates at Harvard Business School
-          </p>
         </div>
 
         <div className="mx-auto mt-12 max-w-3xl">
@@ -48,8 +43,7 @@ export default function Home() {
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200">
             <p className="text-sm">
               Heads up, I made this in a few hours so it likely has a few bugs.
-              I have not spent a lot of time on it and AI wrote a lot of it, so
-              I did not fully audit everything.
+              If you find a bug or have any suggestions feel free to reach out.
             </p>
           </div>
         </div>
