@@ -14,9 +14,8 @@ import { MobileNav } from "@/components/layout/mobile-nav";
 // });
 
 export const metadata: Metadata = {
-  title: "Schedule - Class Participation Tracker",
-  description:
-    "Track your class participation and manage your academic schedule",
+  title: "Track Your Comments in Class",
+  description: "Track your class participation",
 };
 
 export default function RootLayout({
