@@ -40,7 +40,11 @@
     "typescript": "^5"
   },
   "trustedDependencies": [
+    "@prisma/client",
+    "@prisma/engines",
     "@tailwindcss/oxide",
+    "prisma",
+    "sharp",
     "unrs-resolver"
   ]
 }
