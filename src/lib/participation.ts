@@ -1,6 +1,7 @@
 import { prisma } from "./prisma";
 import { requireAuth } from "./auth-utils";
 import { HistorySession } from "@/components/infinite-history-view";
+import { UserStatsData, CourseStatistics, OverallStatistics, SessionDetail } from "./types";
 
 export async function getTodaysParticipation() {
   const user = await requireAuth();
@@ -290,5 +291,138 @@ export async function getHistoryPageData(cursor?: Date, limit: number = 20) {
     historyGroups,
     hasMore,
     nextCursor,
+  };
+}
+
+// Get comprehensive user statistics for the stats page
+export async function getUserStatistics(): Promise<UserStatsData> {
+  const user = await requireAuth();
+  const now = new Date();
+
+  // Get all courses with their sessions and user's participation data
+  const courses = await prisma.course.findMany({
+    include: {
+      sessions: {
+        where: {
+          startAt: {
+            lt: now, // Only past sessions
+          },
+        },
+        include: {
+          participation: {
+            where: {
+              userId: user.id,
+            },
+          },
+        },
+        orderBy: {
+          startAt: "desc",
+        },
+      },
+    },
+  });
+
+  // Calculate statistics for each course
+  const courseStatistics: CourseStatistics[] = courses
+    .filter(course => course.sessions.length > 0) // Only courses with past sessions
+    .map((course) => {
+      const sessions = course.sessions;
+      const totalSessionsPassed = sessions.length;
+      
+      // Count participated sessions (where user participated = true)
+      const participatedSessions = sessions.filter(session => 
+        session.participation.length > 0 && 
+        session.participation[0].participated === true
+      ).length;
+      
+      const participationPercentage = totalSessionsPassed > 0 
+        ? Math.round((participatedSessions / totalSessionsPassed) * 100)
+        : 0;
+
+      // Find sessions since last participation
+      let sessionsSinceLastParticipation = 0;
+      let lastParticipationDate: Date | null = null;
+      let lastQuality: number | null = null;
+
+      for (const session of sessions) {
+        const participation = session.participation[0];
+        if (participation && participation.participated) {
+          lastParticipationDate = participation.createdAt;
+          lastQuality = participation.quality;
+          break; // Found most recent participation
+        }
+        sessionsSinceLastParticipation++;
+      }
+
+      // If no participation found, sessionsSinceLastParticipation = total sessions
+      if (!lastParticipationDate) {
+        sessionsSinceLastParticipation = totalSessionsPassed;
+      }
+
+      // Create session details array
+      const sessionDetails: SessionDetail[] = sessions.map(session => {
+        const participation = session.participation[0];
+        return {
+          id: session.id,
+          date: session.startAt,
+          case: session.case,
+          participated: participation ? participation.participated : false,
+          quality: participation ? participation.quality : null,
+          note: participation ? participation.note : null,
+        };
+      });
+
+      return {
+        courseName: course.name,
+        courseId: course.id,
+        sessionsSinceLastParticipation,
+        totalSessionsPassed,
+        participatedSessions,
+        participationPercentage,
+        lastParticipationDate,
+        lastQuality,
+        sessions: sessionDetails,
+      };
+    });
+
+  // Calculate overall statistics
+  const totalSessionsPassed = courseStatistics.reduce(
+    (sum, course) => sum + course.totalSessionsPassed, 0
+  );
+  
+  const totalParticipatedSessions = courseStatistics.reduce(
+    (sum, course) => sum + course.participatedSessions, 0
+  );
+
+  const overallParticipationPercentage = totalSessionsPassed > 0 
+    ? Math.round((totalParticipatedSessions / totalSessionsPassed) * 100)
+    : 0;
+
+  // Calculate average quality from all participations
+  const allParticipations = await prisma.participation.findMany({
+    where: {
+      userId: user.id,
+      participated: true,
+      quality: {
+        gt: 0, // Only include quality ratings > 0
+      },
+    },
+  });
+
+  const averageQuality = allParticipations.length > 0
+    ? allParticipations.reduce((sum, p) => sum + p.quality, 0) / allParticipations.length
+    : null;
+
+  const overallStatistics: OverallStatistics = {
+    totalSessionsPassed,
+    totalParticipatedSessions,
+    overallParticipationPercentage,
+    totalCourses: courseStatistics.length,
+    averageQuality,
+  };
+
+  return {
+    courseStatistics,
+    overallStatistics,
   };
 }
