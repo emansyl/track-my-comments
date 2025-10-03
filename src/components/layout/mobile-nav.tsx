@@ -1,20 +1,21 @@
-'use client';
+"use client";
 
-import { Home, Calendar } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import { Home, Calendar, List } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: '/dashboard', icon: Home, label: 'Today' },
-  { href: '/history', icon: Calendar, label: 'History' }
+  { href: "/dashboard", icon: Home, label: "Today" },
+  { href: "/stats", icon: List, label: "Stats" },
+  { href: "/history", icon: Calendar, label: "History" },
 ];
 
 export function MobileNav() {
   const pathname = usePathname();
 
   // Hide navigation on landing page
-  if (pathname === '/') {
+  if (pathname === "/") {
     return null;
   }
 
@@ -23,15 +24,15 @@ export function MobileNav() {
       <div className="flex justify-around items-center max-w-md mx-auto">
         {navItems.map(({ href, icon: Icon, label }) => {
           const isActive = pathname === href;
-          
+
           return (
             <Link
               key={href}
               href={href}
               className={cn(
                 "flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-colors min-h-[60px] min-w-[60px]",
-                isActive 
-                  ? "text-blue-600 bg-blue-50" 
+                isActive
+                  ? "text-blue-600 bg-blue-50"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               )}
             >
